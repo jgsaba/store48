@@ -1,0 +1,47 @@
+
+version: "3.5"
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  user:
+    image: store48/user-api:latest
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    depends_on:
+      - postgres
+
+  product:
+    image: store48/product-api:latest
+    ports:
+      - "8089:8089"
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    depends_on:
+      - postgres
+
+  shopping:
+    image: store48/shopping-api:latest
+    ports:
+      - "8082:8082"
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      USER_API_URL: user:8080
+      PRODUCT_API_URI: product:8089
+    depends_on:
+      - postgres
